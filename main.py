@@ -109,3 +109,37 @@ for index, (jogo, probabilidade) in enumerate(
     probabilidade_jogos_sem_repeticao, start=1
 ):
     print(f"Jogo {index}: {jogo} - Probabilidade: {probabilidade:.6f}")
+
+# Implementação para encontrar os 10 números mais e menos sorteados que não saíram há mais tempo
+ultima_data = {}
+for numero in set(numeros):
+    ultima_data[numero] = max(
+        (data for num, data in zip(numeros, datas) if num == numero), default=None
+    )
+
+numeros_ordenados_por_ultimo_sorteio = sorted(
+    probabilidades.keys(),
+    key=lambda num: (probabilidades[num], -1 * (datetime.now() - ultima_data[num]).days),
+    reverse=True,
+)
+
+# Pegar os 10 números mais sorteados que não saíram por mais tempo
+top_10_mais_sorteados_e_com_mais_tempo = [
+    numero
+    for numero in numeros_ordenados_por_ultimo_sorteio
+    if numero not in [num for num, _ in numeros_mais_sorteados[:10]]
+][:10]
+
+# Pegar os 10 números menos sorteados que não saíram por mais tempo
+top_10_menos_sorteados_e_com_mais_tempo = [
+    numero
+    for numero in reversed(numeros_ordenados_por_ultimo_sorteio)
+    if numero not in [num for num, _ in numeros_mais_sorteados[-10:]]
+][:10]
+
+# Mostrar os números mais e menos sorteados que não saíram por mais tempo
+print("\nDez números mais sorteados que não saíram por mais tempo:")
+print(top_10_mais_sorteados_e_com_mais_tempo)
+
+print("\nDez números menos sorteados que não saíram por mais tempo:")
+print(top_10_menos_sorteados_e_com_mais_tempo)
